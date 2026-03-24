@@ -174,7 +174,9 @@ export default function SignUpScreen({ onLogin, onOTPSent }) {
             activeOpacity={0.85}
           >
             <View style={styles.googleBtnContent}>
-              <Text style={styles.googleIcon}>G</Text>
+              <View style={styles.googleLogo}>
+                <Text style={styles.googleLogoG}>G</Text>
+              </View>
               <Text style={styles.googleBtnText}>Continue with Google</Text>
             </View>
           </TouchableOpacity>
@@ -315,18 +317,21 @@ const styles = StyleSheet.create({
   googleBtnContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.s2,
+    gap: spacing.s3,
   },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+  googleLogo: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     backgroundColor: "#4285F4",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleLogoG: {
     color: "#fff",
-    textAlign: "center",
-    lineHeight: 24,
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "bold",
+    textAlign: "center",
   },
   googleBtnText: {
     ...typography.labelLg,
