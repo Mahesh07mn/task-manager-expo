@@ -168,6 +168,17 @@ export default function SignUpScreen({ onLogin, onOTPSent }) {
             )}
           </TouchableOpacity>
 
+          {/* Google Button */}
+          <TouchableOpacity
+            style={styles.googleBtn}
+            activeOpacity={0.85}
+          >
+            <View style={styles.googleBtnContent}>
+              <Text style={styles.googleIcon}>G</Text>
+              <Text style={styles.googleBtnText}>Continue with Google</Text>
+            </View>
+          </TouchableOpacity>
+
           {/* Legal Text */}
           <Text style={styles.legalText}>
             By continuing, you agree to Tsk Manager's{" "}
@@ -287,6 +298,39 @@ const styles = StyleSheet.create({
   continueBtnText: {
     ...typography.labelLg,
     color: colors.primaryText,
+  },
+
+  // Google Button
+  googleBtn: {
+    width: "100%",
+    height: spacing.s6,
+    backgroundColor: colors.surface,
+    borderRadius: radius.pill,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.s2,
+  },
+  googleBtnContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.s2,
+  },
+  googleIcon: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "#4285F4",
+    color: "#fff",
+    textAlign: "center",
+    lineHeight: 24,
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  googleBtnText: {
+    ...typography.labelLg,
+    color: colors.textPrimary,
   },
 
   // Legal
