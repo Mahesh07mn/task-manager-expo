@@ -102,6 +102,8 @@ export default function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [tasks, setTasks] = useState([]);
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const authSlideAnim = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
   const notificationMapRef = useRef({});
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -138,6 +140,52 @@ export default function App() {
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
     }).start();
+  };
+
+  const navigateToLogin = () => {
+    authSlideAnim.setValue(-SCREEN_WIDTH);
+    setScreen('login');
+    Animated.timing(authSlideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const navigateToSignUp = () => {
+    authSlideAnim.setValue(SCREEN_WIDTH);
+    setScreen('signup');
+    Animated.timing(authSlideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const navigateToOTP = (source) => {
+    authSlideAnim.setValue(-SCREEN_WIDTH);
+    setScreen('otp');
+    setOtpSource(source);
+    Animated.timing(authSlideAnim, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const navigateToHome = () => {
+    Animated.timing(authSlideAnim, {
+      toValue: SCREEN_WIDTH,
+      duration: 300,
+      easing: Easing.inOut(Easing.ease),
+      useNativeDriver: true,
+    }).start(() => {
+      setScreen('home');
+      authSlideAnim.setValue(0);
+    });
   };
 
   const handleCreateTask = async (newTask) => {
@@ -192,8 +240,7 @@ export default function App() {
 
   const handleOTPSent = (source) => (userEmail) => {
     setEmail(userEmail);
-    setOtpSource(source);
-    setScreen('otp');
+    navigateToOTP(source);
   };
 
   const handleOTPVerified = async () => {
@@ -208,7 +255,7 @@ export default function App() {
     setUser(userData);
     const userTasks = await loadTasksFromStorage(userData.id);
     setTasks(userTasks);
-    setScreen('home');
+    navigateToHome();
   };
 
   const navigateToAccount = () => {
@@ -225,7 +272,7 @@ export default function App() {
   const handleSignOut = async () => {
     setUser(null);
     setTasks([]);
-    setScreen('signup');
+    navigateToSignUp();
   };
 
   // Register for push notifications on mount
@@ -258,33 +305,66 @@ export default function App() {
   }, [tasks]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setScreen('signup'), 2500);
+    const timer = setTimeout(() => {
+      // Fade out splash, then show signup
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start(() => {
+        setScreen('signup');
+        authSlideAnim.setValue(SCREEN_WIDTH);
+        // Fade in signup
+        Animated.timing(authSlideAnim, {
+          toValue: 0,
+          duration: 300,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true,
+        }).start();
+      });
+    }, 2200);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
     <SafeAreaProvider>
-      {screen === 'splash' && <SplashScreen />}
+      {screen === 'splash' && (
+        <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
+          <SplashScreen />
+        </Animated.View>
+      )}
       {screen === 'signup' && (
-        <SignUpScreen
-          onOTPSent={handleOTPSent('signup')}
-          onLogin={() => setScreen('login')}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+          <SignUpScreen
+            onOTPSent={handleOTPSent('signup')}
+            onLogin={navigateToLogin}
+          />
+        </Animated.View>
       )}
       {screen === 'login' && (
-        <LoginScreen
-          onOTPSent={handleOTPSent('login')}
-          onSignUp={() => setScreen('signup')}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+          <LoginScreen
+            onOTPSent={handleOTPSent('login')}
+            onSignUp={navigateToSignUp}
+          />
+        </Animated.View>
       )}
       {screen === 'otp' && (
-        <OTPScreen
-          email={email}
-          onBack={() => setScreen(otpSource)}
-          onVerified={handleOTPVerified}
-          onLogin={() => setScreen('login')}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+          <OTPScreen
+            email={email}
+            onBack={() => {
+              if (otpSource === 'signup') {
+                navigateToSignUp();
+              } else {
+                navigateToLogin();
+              }
+            }}
+            onVerified={handleOTPVerified}
+            onLogin={navigateToLogin}
+          />
+        </Animated.View>
       )}
       {(screen === 'home' || screen === 'tasks' || screen === 'createTask' || screen === 'account') && (
         <HomeScreen
