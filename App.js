@@ -327,15 +327,15 @@ export default function App() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-    <SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: '#000' }}>
+    <SafeAreaProvider style={{ flex: 1, backgroundColor: '#000' }}>
       {screen === 'splash' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { opacity: fadeAnim }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', opacity: fadeAnim }]}>
           <SplashScreen />
         </Animated.View>
       )}
       {screen === 'signup' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authSlideAnim }] }]}>
           <SignUpScreen
             onOTPSent={handleOTPSent('signup')}
             onLogin={navigateToLogin}
@@ -343,7 +343,7 @@ export default function App() {
         </Animated.View>
       )}
       {screen === 'login' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authSlideAnim }] }]}>
           <LoginScreen
             onOTPSent={handleOTPSent('login')}
             onSignUp={navigateToSignUp}
@@ -351,7 +351,7 @@ export default function App() {
         </Animated.View>
       )}
       {screen === 'otp' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ translateX: authSlideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authSlideAnim }] }]}>
           <OTPScreen
             email={email}
             onBack={() => {
@@ -367,17 +367,19 @@ export default function App() {
         </Animated.View>
       )}
       {(screen === 'home' || screen === 'tasks' || screen === 'createTask' || screen === 'account') && (
-        <HomeScreen
-          userEmail={user?.email || ''}
-          tasks={tasks}
-          onOpenGroup={navigateToTasks}
-          onCreateTask={navigateToCreate}
-          onDeleteTask={handleDeleteTask}
-          onNavigateToAccount={navigateToAccount}
-        />
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000' }]}>
+          <HomeScreen
+            userEmail={user?.email || ''}
+            tasks={tasks}
+            onOpenGroup={navigateToTasks}
+            onCreateTask={navigateToCreate}
+            onDeleteTask={handleDeleteTask}
+            onNavigateToAccount={navigateToAccount}
+          />
+        </Animated.View>
       )}
       {screen === 'tasks' && selectedGroup && (
-        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, transform: [{ translateX: slideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, backgroundColor: '#000', transform: [{ translateX: slideAnim }] }]}>
           <TaskScreen
             dateGroup={selectedGroup}
             onBack={navigateBack}
@@ -385,7 +387,7 @@ export default function App() {
         </Animated.View>
       )}
       {screen === 'createTask' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, transform: [{ translateX: slideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, backgroundColor: '#000', transform: [{ translateX: slideAnim }] }]}>
           <CreateTaskScreen
             onBack={navigateBack}
             onCreate={handleCreateTask}
@@ -393,7 +395,7 @@ export default function App() {
         </Animated.View>
       )}
       {screen === 'account' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, transform: [{ translateX: slideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { zIndex: 10, backgroundColor: '#000', transform: [{ translateX: slideAnim }] }]}>
           <AccountScreen
             user={user}
             onBack={navigateBack}
