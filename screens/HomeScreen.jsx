@@ -139,16 +139,15 @@ const SwipeableTaskRow = ({ task, onDelete, isLast }) => {
       >
         <View style={styles.taskRow}>
           <Text style={styles.taskName}>{task.name}</Text>
-          {task.dateTime ? (
-            <Text style={[
-              styles.taskSubtitle,
-              getExpiryInfo(task).expired && styles.taskExpired,
-            ]}>
-              {getExpiryInfo(task).label}
-            </Text>
-          ) : (
-            <Text style={styles.taskSubtitle}>{task.subtitle}</Text>
-          )}
+          {(() => {
+            if (!task.dateTime) return <Text style={styles.taskSubtitle}>{task.subtitle}</Text>;
+            const info = getExpiryInfo(task);
+            return (
+              <Text style={[styles.taskSubtitle, info.expired && styles.taskExpired]}>
+                {info.label}
+              </Text>
+            );
+          })()}
         </View>
       </Swipeable>
       {!isLast && <View style={styles.divider} />}
@@ -220,7 +219,7 @@ export default function HomeScreen({ userEmail, onCreateTask, onOpenGroup, tasks
     const filtered = tasks.filter(
       (t) =>
         t.name.toLowerCase().includes(query) ||
-        t.subtitle.toLowerCase().includes(query)
+        (t.subtitle && t.subtitle.toLowerCase().includes(query))
     );
     return groupByDate(filtered);
   }, [search, tasks]);
@@ -530,19 +529,6 @@ const styles = StyleSheet.create({
     right: spacing.s2,
     height: 1,
     backgroundColor: "rgba(255,255,255,0.28)",
-    borderRadius: 1,
-  },
-  addGlassOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(254,215,2,0.38)",
-  },
-  addGlassHighlight: {
-    position: "absolute",
-    top: 0,
-    left: spacing.s1,
-    right: spacing.s1,
-    height: 1.5,
-    backgroundColor: "rgba(254,215,2,0.85)",
     borderRadius: 1,
   },
   deleteAction: {

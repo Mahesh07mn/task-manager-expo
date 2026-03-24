@@ -32,15 +32,7 @@ export const sendOTP = async (email) => {
       attempts: 0
     };
 
-    // Send email using EmailJS
-    const templateParams = {
-      to_email: email,
-      otp_code: otp,
-      from_name: 'TaskMaster App'
-    };
-
     try {
-      // Send email using EmailJS REST API for React Native compatibility
       const emailData = {
         service_id: EMAILJS_SERVICE_ID,
         template_id: EMAILJS_TEMPLATE_ID,
@@ -52,8 +44,6 @@ export const sendOTP = async (email) => {
           from_name: 'TaskMaster App'
         }
       };
-
-      console.log('Sending EmailJS request:', JSON.stringify(emailData, null, 2));
 
       const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
         method: 'POST',

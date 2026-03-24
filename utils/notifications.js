@@ -13,35 +13,39 @@ Notifications.setNotificationHandler({
 
 // Request notification permissions
 export const registerForPushNotifications = async () => {
-  if (!Device.isDevice) {
-    console.log('Push notifications require a physical device');
+  try {
+    if (!Device.isDevice) {
+      console.log('Push notifications work best on a physical device');
+    }
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+
+    if (finalStatus !== 'granted') {
+      console.log('Push notification permission not granted');
+      return false;
+    }
+
+    // Android notification channel
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('task-expiry', {
+        name: 'Task Expiry',
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        sound: 'default',
+      });
+    }
+
+    return true;
+  } catch (error) {
+    console.log('Notification registration error (non-fatal):', error.message);
     return false;
   }
-
-  const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  let finalStatus = existingStatus;
-
-  if (existingStatus !== 'granted') {
-    const { status } = await Notifications.requestPermissionsAsync();
-    finalStatus = status;
-  }
-
-  if (finalStatus !== 'granted') {
-    console.log('Push notification permission not granted');
-    return false;
-  }
-
-  // Android notification channel
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('task-expiry', {
-      name: 'Task Expiry',
-      importance: Notifications.AndroidImportance.HIGH,
-      vibrationPattern: [0, 250, 250, 250],
-      sound: 'default',
-    });
-  }
-
-  return true;
 };
 
 // Schedule a push notification for task expiry
