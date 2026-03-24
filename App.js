@@ -96,6 +96,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export default function App() {
   const [screen, setScreen] = useState('splash');
+  const [prevScreen, setPrevScreen] = useState(null);
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [otpSource, setOtpSource] = useState('signup');
@@ -103,6 +104,7 @@ export default function App() {
   const [tasks, setTasks] = useState([]);
   const slideAnim = useRef(new Animated.Value(0)).current;
   const authSlideAnim = useRef(new Animated.Value(0)).current;
+  const authExitAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
   const fadeUpAnim = useRef(new Animated.Value(50)).current;
   const notificationMapRef = useRef({});
@@ -144,48 +146,79 @@ export default function App() {
   };
 
   const navigateToLogin = () => {
-    authSlideAnim.setValue(-SCREEN_WIDTH);
+    setPrevScreen(screen);
+    authExitAnim.setValue(0);
+    authSlideAnim.setValue(SCREEN_WIDTH);
     setScreen('login');
-    Animated.timing(authSlideAnim, {
-      toValue: 0,
-      duration: 300,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(authExitAnim, {
+        toValue: -SCREEN_WIDTH,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(authSlideAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start(() => setPrevScreen(null));
   };
 
   const navigateToSignUp = () => {
+    setPrevScreen(screen);
+    authExitAnim.setValue(0);
     fadeUpAnim.setValue(50);
     setScreen('signup');
-    Animated.timing(fadeUpAnim, {
-      toValue: 0,
-      duration: 400,
-      easing: Easing.out(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(authExitAnim, {
+        toValue: SCREEN_WIDTH,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(fadeUpAnim, {
+        toValue: 0,
+        duration: 400,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start(() => setPrevScreen(null));
   };
 
   const navigateToOTP = (source) => {
-    authSlideAnim.setValue(-SCREEN_WIDTH);
+    setPrevScreen(screen);
+    authExitAnim.setValue(0);
+    authSlideAnim.setValue(SCREEN_WIDTH);
     setScreen('otp');
     setOtpSource(source);
-    Animated.timing(authSlideAnim, {
-      toValue: 0,
-      duration: 300,
-      easing: Easing.inOut(Easing.ease),
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(authExitAnim, {
+        toValue: -SCREEN_WIDTH,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+      Animated.timing(authSlideAnim, {
+        toValue: 0,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: true,
+      }),
+    ]).start(() => setPrevScreen(null));
   };
 
   const navigateToHome = () => {
-    Animated.timing(authSlideAnim, {
+    Animated.timing(authExitAnim, {
       toValue: SCREEN_WIDTH,
       duration: 300,
       easing: Easing.inOut(Easing.ease),
       useNativeDriver: true,
     }).start(() => {
       setScreen('home');
-      authSlideAnim.setValue(0);
+      setPrevScreen(null);
+      authExitAnim.setValue(0);
     });
   };
 
@@ -337,6 +370,24 @@ export default function App() {
           <SplashScreen />
         </Animated.View>
       )}
+      {/* Previous screen (animating out) */}
+      {prevScreen === 'signup' && (
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authExitAnim }] }]}>
+          <SignUpScreen onOTPSent={() => {}} onLogin={() => {}} />
+        </Animated.View>
+      )}
+      {prevScreen === 'login' && (
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authExitAnim }] }]}>
+          <LoginScreen onOTPSent={() => {}} onSignUp={() => {}} />
+        </Animated.View>
+      )}
+      {prevScreen === 'otp' && (
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authExitAnim }] }]}>
+          <OTPScreen email={email} onBack={() => {}} onVerified={() => {}} onLogin={() => {}} />
+        </Animated.View>
+      )}
+
+      {/* Current screen (animating in) */}
       {screen === 'signup' && (
         <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateY: fadeUpAnim }] }]}>
           <SignUpScreen
