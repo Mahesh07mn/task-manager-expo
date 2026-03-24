@@ -47,7 +47,7 @@ export default function CreateTaskScreen({ onBack, onCreate }) {
       id: `task_${Date.now()}`,
       name: name.trim(),
       date: dateTime.toISOString().split("T")[0],
-      dateTime,
+      dateTime: dateTime.toISOString(),
       subtitle: `Expires at ${formatTime(dateTime)}`,
       items: [],
     });

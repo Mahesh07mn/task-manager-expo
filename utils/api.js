@@ -64,43 +64,15 @@ export const sendOTP = async (email) => {
         body: JSON.stringify(emailData),
       });
 
-      console.log('EmailJS response status:', response.status);
-      console.log('EmailJS response headers:', response.headers);
-
-      let responseText;
-      try {
-        responseText = await response.text();
-        console.log('EmailJS response text:', responseText);
-      } catch (textError) {
-        console.log('Error reading response text:', textError);
-        responseText = '';
-      }
-
-      let result;
-      try {
-        result = responseText ? JSON.parse(responseText) : {};
-        console.log('Parsed EmailJS result:', result);
-      } catch (parseError) {
-        console.log('EmailJS response parsing error:', parseError);
-        console.log('Response text was:', responseText);
-        result = {};
-      }
-
-      // Check for success based on HTTP status and response
       if (response.status === 200) {
         return {
           success: true,
           message: 'OTP sent successfully',
-          otp: otp // Include OTP for demo
+          otp: otp
         };
-      } else if (response.status === 400) {
-        throw new Error('Bad request - check EmailJS configuration');
-      } else if (response.status === 401) {
-        throw new Error('Unauthorized - check EmailJS public key');
-      } else if (response.status === 403) {
-        throw new Error('Forbidden - check EmailJS service permissions');
       } else {
-        throw new Error(`HTTP ${response.status}: ${responseText || 'Unknown error'}`);
+        const responseText = await response.text();
+        throw new Error(`EmailJS error (${response.status}): ${responseText}`);
       }
     } catch (emailError) {
       // Fallback for demo when EmailJS fails

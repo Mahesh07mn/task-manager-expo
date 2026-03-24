@@ -18,6 +18,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { LinearGradient } from "expo-linear-gradient";
 import { colors, typography, spacing, radius } from '../utils/theme';
+import { getExpiryInfo } from '../utils/notifications';
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -138,7 +139,16 @@ const SwipeableTaskRow = ({ task, onDelete, isLast }) => {
       >
         <View style={styles.taskRow}>
           <Text style={styles.taskName}>{task.name}</Text>
-          <Text style={styles.taskSubtitle}>{task.subtitle}</Text>
+          {task.dateTime ? (
+            <Text style={[
+              styles.taskSubtitle,
+              getExpiryInfo(task).expired && styles.taskExpired,
+            ]}>
+              {getExpiryInfo(task).label}
+            </Text>
+          ) : (
+            <Text style={styles.taskSubtitle}>{task.subtitle}</Text>
+          )}
         </View>
       </Swipeable>
       {!isLast && <View style={styles.divider} />}
@@ -368,6 +378,10 @@ const styles = StyleSheet.create({
   taskSubtitle: {
     ...typography.bodySm,
     color: colors.textSecondary,
+  },
+  taskExpired: {
+    color: '#FF6B6B',
+    fontWeight: '600',
   },
   divider: {
     height: StyleSheet.hairlineWidth,

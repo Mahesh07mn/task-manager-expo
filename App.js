@@ -12,6 +12,13 @@ import AccountScreen from './screens/AccountScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import TaskScreen from './screens/TaskScreen';
 import CreateTaskScreen from './screens/CreateTaskScreen';
+import {
+  registerForPushNotifications,
+  scheduleTaskExpiryNotification,
+  cancelTaskNotification,
+  rescheduleAllTaskNotifications,
+} from './utils/notifications';
+import * as Notifications from 'expo-notifications';
 
 // ─── Sample tasks (replace with API data later) ───────────────────────────────
 const buildSampleTasks = () => {
@@ -22,9 +29,16 @@ const buildSampleTasks = () => {
 
   const fmt = (d) => d.toISOString().split("T")[0];
 
+  const makeDateTime = (d, hours, minutes) => {
+    const dt = new Date(d);
+    dt.setHours(hours, minutes, 0, 0);
+    return dt.toISOString();
+  };
+
   return [
     {
       id: "t1", name: "House grocery", subtitle: "Expires at 8:52 AM", date: fmt(today),
+      dateTime: makeDateTime(today, 8, 52),
       items: [
         { id: "i1", name: "Chicken / Fish - 2 kgs", done: true },
         { id: "i2", name: "Toor dal / Moong dal",   done: false },
@@ -36,6 +50,7 @@ const buildSampleTasks = () => {
     },
     {
       id: "t2", name: "Office", subtitle: "Expires at 6:00 PM", date: fmt(today),
+      dateTime: makeDateTime(today, 18, 0),
       items: [
         { id: "i7", name: "Submit timesheet",                    done: false },
         { id: "i8", name: "Update feedback from client review",  done: false },
@@ -87,6 +102,9 @@ export default function App() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [tasks, setTasks] = useState([]);
   const slideAnim = useRef(new Animated.Value(0)).current;
+  const notificationMapRef = useRef({});
+  const notificationListener = useRef();
+  const responseListener = useRef();
 
   const navigateToTasks = (group) => {
     setSelectedGroup(group);
@@ -122,17 +140,31 @@ export default function App() {
     }).start();
   };
 
-  const handleCreateTask = (newTask) => {
+  const handleCreateTask = async (newTask) => {
     const updatedTasks = [...tasks, newTask];
     setTasks(updatedTasks);
     saveTasksToStorage(updatedTasks);
+
+    // Schedule expiry notification
+    const notifId = await scheduleTaskExpiryNotification(newTask);
+    if (notifId) {
+      notificationMapRef.current[newTask.id] = notifId;
+    }
+
     navigateBack();
   };
 
-  const handleDeleteTask = (taskId) => {
+  const handleDeleteTask = async (taskId) => {
     const updatedTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(updatedTasks);
     saveTasksToStorage(updatedTasks);
+
+    // Cancel scheduled notification
+    const notifId = notificationMapRef.current[taskId];
+    if (notifId) {
+      await cancelTaskNotification(notifId);
+      delete notificationMapRef.current[taskId];
+    }
   };
 
   const saveTasksToStorage = async (tasksToSave) => {
@@ -195,6 +227,39 @@ export default function App() {
     setTasks([]);
     setScreen('signup');
   };
+
+  // Register for push notifications on mount
+  useEffect(() => {
+    registerForPushNotifications();
+
+    // Listen for incoming notifications
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received:', notification);
+    });
+
+    // Listen for notification taps
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+      console.log('Notification tapped:', response);
+    });
+
+    return () => {
+      if (notificationListener.current) {
+        Notifications.removeNotificationSubscription(notificationListener.current);
+      }
+      if (responseListener.current) {
+        Notifications.removeNotificationSubscription(responseListener.current);
+      }
+    };
+  }, []);
+
+  // Reschedule notifications whenever tasks change
+  useEffect(() => {
+    if (tasks.length > 0) {
+      rescheduleAllTaskNotifications(tasks).then(map => {
+        notificationMapRef.current = map;
+      });
+    }
+  }, [tasks]);
 
   useEffect(() => {
     const timer = setTimeout(() => setScreen('signup'), 2500);
