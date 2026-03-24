@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -11,7 +11,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import Svg, { Path, G, Mask } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 import { MaterialIcons } from "@expo/vector-icons";
 import { colors, typography, spacing, radius } from '../utils/theme';
 import { sendOTP } from "../utils/api";
@@ -32,50 +32,6 @@ const SwooshLogo = () => (
       fill="#FED702"
     />
   </Svg>
-);
-
-// ─── Google Icon ─────────────────────────────────────────────────────────────
-const GoogleIcon = () => (
-  <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
-    <Mask
-      id="mask0"
-      style={{ maskType: "luminance" }}
-      maskUnits="userSpaceOnUse"
-      x="0"
-      y="0"
-      width="20"
-      height="20"
-    >
-      <Path d="M20 0H0V20H20V0Z" fill="white" />
-    </Mask>
-    <G mask="url(#mask0)">
-      <Path
-        d="M19.6 10.227c0-.709-.064-1.39-.182-2.045H10v3.868h5.382a4.6 4.6 0 01-1.996 3.018v2.51h3.232C18.341 15.836 19.6 13.273 19.6 10.227z"
-        fill="#4285F4"
-      />
-      <Path
-        d="M10 20c2.7 0 4.964-.895 6.618-2.423l-3.232-2.509c-.895.6-2.04.955-3.386.955-2.605 0-4.81-1.76-5.595-4.123H1.064v2.59A9.996 9.996 0 0010 20z"
-        fill="#34A853"
-      />
-      <Path
-        d="M4.405 11.9A6.01 6.01 0 014.09 10c0-.663.114-1.308.314-1.9V5.51H1.064A9.996 9.996 0 000 10c0 1.614.386 3.14 1.064 4.49l3.34-2.59z"
-        fill="#FBBC05"
-      />
-      <Path
-        d="M10 3.977c1.468 0 2.786.505 3.822 1.496l2.868-2.868C14.959.99 12.695 0 10 0 6.09 0 2.71 2.24 1.064 5.51l3.34 2.59C5.192 5.736 7.396 3.977 10 3.977z"
-        fill="#EA4335"
-      />
-    </G>
-  </Svg>
-);
-
-// ─── Or Divider ──────────────────────────────────────────────────────────────
-const OrDivider = () => (
-  <View style={styles.dividerRow}>
-    <View style={styles.dividerLine} />
-    <Text style={styles.dividerText}>or</Text>
-    <View style={styles.dividerLine} />
-  </View>
 );
 
 // ─── Email validation ─────────────────────────────────────────────────────────
@@ -256,38 +212,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: spacing.s5,
     paddingHorizontal: spacing.s2,
-  },
-
-  googleBtn: {
-    width: "100%",
-    height: spacing.s6,
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.s1,
-    marginBottom: spacing.s3,
-  },
-  googleBtnText: {
-    ...typography.headingSm,
-    marginLeft: spacing.s1,
-  },
-
-  dividerRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.s3,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.divider,
-  },
-  dividerText: {
-    ...typography.labelSm,
-    marginHorizontal: spacing.s2,
   },
 
   inputGroup: {

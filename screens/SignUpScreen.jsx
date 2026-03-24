@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import {
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Svg, { Path, G, Mask } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors, typography, spacing, radius } from '../utils/theme';
 import { sendOTP, checkEmail } from "../utils/api";
@@ -35,50 +35,6 @@ const SwooshLogo = () => (
       fill="#FED702"
     />
   </Svg>
-);
-
-// ─── Google Icon ─────────────────────────────────────────────────────────────
-const GoogleIcon = () => (
-  <Svg width={20} height={20} viewBox="0 0 20 20" fill="none">
-    <Mask
-      id="mask0"
-      style={{ maskType: "luminance" }}
-      maskUnits="userSpaceOnUse"
-      x="0"
-      y="0"
-      width="20"
-      height="20"
-    >
-      <Path d="M20 0H0V20H20V0Z" fill="white" />
-    </Mask>
-    <G mask="url(#mask0)">
-      <Path
-        d="M19.6 10.2273C19.6 9.51819 19.5364 8.83639 19.4182 8.18179H10V12.05H15.3818C15.15 13.3 14.4455 14.3591 13.3864 15.0682V17.5773H16.6182C18.5091 15.8364 19.6 13.2727 19.6 10.2273Z"
-        fill="#4285F4"
-      />
-      <Path
-        d="M10.0001 20C12.7001 20 14.9637 19.1045 16.6183 17.5773L13.3864 15.0682C12.491 15.6682 11.3455 16.0227 10.0001 16.0227C7.39552 16.0227 5.19102 14.2636 4.40462 11.9H1.06372V14.4909C2.70922 17.7591 6.09102 20 10.0001 20Z"
-        fill="#34A853"
-      />
-      <Path
-        d="M4.4045 11.9C4.2045 11.3 4.0909 10.6591 4.0909 9.99999C4.0909 9.34089 4.2045 8.69999 4.4045 8.09999V5.50909H1.0636C0.386401 6.85909 0 8.38639 0 9.99999C0 11.6136 0.386401 13.1409 1.0636 14.4909L4.4045 11.9Z"
-        fill="#FBBC04"
-      />
-      <Path
-        d="M10.0001 3.9773C11.4683 3.9773 12.7864 4.4818 13.8228 5.4727L16.691 2.6045C14.9592 0.9909 12.6955 0 10.0001 0C6.09102 0 2.70922 2.2409 1.06372 5.5091L4.40462 8.1C5.19102 5.7364 7.39552 3.9773 10.0001 3.9773Z"
-        fill="#E94235"
-      />
-    </G>
-  </Svg>
-);
-
-// ─── Divider ─────────────────────────────────────────────────────────────────
-const OrDivider = () => (
-  <View style={styles.dividerRow}>
-    <View style={styles.dividerLine} />
-    <Text style={styles.dividerText}>or</Text>
-    <View style={styles.dividerLine} />
-  </View>
 );
 
 // ─── Main Screen ─────────────────────────────────────────────────────────────
@@ -267,40 +223,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: spacing.s5,
     paddingHorizontal: spacing.s2,
-  },
-
-  // Google Button
-  googleBtn: {
-    width: "100%",
-    height: spacing.s6,
-    backgroundColor: colors.surface,
-    borderRadius: radius.pill,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: spacing.s1,
-    marginBottom: spacing.s3,
-  },
-  googleBtnText: {
-    ...typography.headingSm,
-    marginLeft: spacing.s1,
-  },
-
-  // Divider
-  dividerRow: {
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: spacing.s3,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: colors.divider,
-  },
-  dividerText: {
-    ...typography.labelSm,
-    marginHorizontal: spacing.s2,
   },
 
   // Email Input Group
