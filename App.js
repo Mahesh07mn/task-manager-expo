@@ -104,6 +104,7 @@ export default function App() {
   const slideAnim = useRef(new Animated.Value(0)).current;
   const authSlideAnim = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(1)).current;
+  const fadeUpAnim = useRef(new Animated.Value(50)).current;
   const notificationMapRef = useRef({});
   const notificationListener = useRef();
   const responseListener = useRef();
@@ -154,12 +155,12 @@ export default function App() {
   };
 
   const navigateToSignUp = () => {
-    authSlideAnim.setValue(SCREEN_WIDTH);
+    fadeUpAnim.setValue(50);
     setScreen('signup');
-    Animated.timing(authSlideAnim, {
+    Animated.timing(fadeUpAnim, {
       toValue: 0,
-      duration: 300,
-      easing: Easing.inOut(Easing.ease),
+      duration: 400,
+      easing: Easing.out(Easing.ease),
       useNativeDriver: true,
     }).start();
   };
@@ -306,21 +307,23 @@ export default function App() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Fade out splash, then show signup
+      // Fade out splash, then show signup with Fade In Up
       Animated.timing(fadeAnim, {
         toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }).start(() => {
         setScreen('signup');
-        authSlideAnim.setValue(SCREEN_WIDTH);
-        // Fade in signup
-        Animated.timing(authSlideAnim, {
-          toValue: 0,
-          duration: 300,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }).start();
+        fadeUpAnim.setValue(50); // Start from below
+        // Fade In Up signup
+        Animated.parallel([
+          Animated.timing(fadeUpAnim, {
+            toValue: 0,
+            duration: 400,
+            easing: Easing.out(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ]).start();
       });
     }, 2200);
     return () => clearTimeout(timer);
@@ -335,7 +338,7 @@ export default function App() {
         </Animated.View>
       )}
       {screen === 'signup' && (
-        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateX: authSlideAnim }] }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, { backgroundColor: '#000', transform: [{ translateY: fadeUpAnim }] }]}>
           <SignUpScreen
             onOTPSent={handleOTPSent('signup')}
             onLogin={navigateToLogin}
