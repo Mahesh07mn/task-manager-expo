@@ -309,34 +309,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderWidth: 1,
     borderColor: colors.border,
-    marginBottom: spacing.s1,
+    marginBottom: spacing.s2,
   },
   googleBtnContent: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.s1 + 4,
+    gap: spacing.s3,
+  },
+  googleLogo: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: "#4285F4",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  googleLogoG: {
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   googleBtnText: {
     ...typography.labelLg,
     color: colors.textPrimary,
-  },
-
-  // Or Divider
-  orRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    marginVertical: spacing.s2,
-  },
-  orLine: {
-    flex: 1,
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.divider,
-  },
-  orText: {
-    ...typography.bodySm,
-    color: colors.textSecondary,
-    marginHorizontal: spacing.s2,
   },
 
   legalText: {

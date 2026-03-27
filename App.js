@@ -236,6 +236,16 @@ export default function App() {
     navigateBack();
   };
 
+  const handleUpdateTaskItems = (updatedGroupTasks) => {
+    // Merge updated tasks from TaskScreen back into the main tasks array
+    const updatedTasks = tasks.map((task) => {
+      const updated = updatedGroupTasks.find((g) => g.id === task.id);
+      return updated ? { ...task, ...updated } : task;
+    });
+    setTasks(updatedTasks);
+    saveTasksToStorage(updatedTasks);
+  };
+
   const handleDeleteTask = async (taskId) => {
     const updatedTasks = tasks.filter((task) => task.id !== taskId);
     setTasks(updatedTasks);
@@ -437,6 +447,7 @@ export default function App() {
           <TaskScreen
             dateGroup={selectedGroup}
             onBack={navigateBack}
+            onUpdateTasks={handleUpdateTaskItems}
           />
         </Animated.View>
       )}

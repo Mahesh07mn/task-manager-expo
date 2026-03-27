@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import {
   View,
   Text,
@@ -194,11 +194,17 @@ const TaskGroupCard = ({ group, onToggle, onDelete, onAddNew }) => {
 };
 
 // ─── Task Screen ──────────────────────────────────────────────────────────────
-export default function TaskScreen({ dateGroup, onBack }) {
+export default function TaskScreen({ dateGroup, onBack, onUpdateTasks }) {
   const [groups, setGroups] = useState(
     dateGroup.tasks.map((t) => ({ ...t, items: t.items ? [...t.items] : [] }))
   );
   const [editing, setEditing] = useState(false);
+
+  // Sync local changes back to parent
+  useEffect(() => {
+    onUpdateTasks?.(groups);
+  }, [groups]);
+
   // Extract current task data
   const currentTask = dateGroup.tasks[0] || {};
   const currentDate = currentTask.date ? new Date(currentTask.date + "T00:00:00") : new Date();
